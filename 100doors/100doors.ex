@@ -54,3 +54,42 @@ end
 
 # Recursive function to print elements
 Printer.printElements(list)
+
+defmodule HundredDoors do
+  # Function to simulate the 100 doors problem
+  def doors(n) do
+    # Create a list of doors, all initially closed (false)
+    doors = for _ <- 1..n, do: false
+    # Call the function to toggle the doors
+    toggle_doors(doors, 1)
+  end
+
+  # Recursive function to toggle the doors
+  # defp is a private function that is not accessible outside the module
+  defp toggle_doors(doors, step) when step > length(doors), do: doors # Base case: if step is greater than the number of doors, return the doors list
+  defp toggle_doors(doors, step) do
+    # Toggle the doors that are multiples of the current step
+    doors = doors
+    |> Enum.with_index()
+    |> Enum.map(fn {door, index} ->
+      if rem(index + 1, step) == 0 do
+        !door # Toggle the door (if it's closed, open it; if it's open, close it)
+      else
+        door # Leave the door as is
+      end
+    end)
+
+    toggle_doors(doors, step + 1) # Recursive call with the next step
+  end
+
+end
+
+# The return value of the doors function is piped to gain an index, then filtered to the doors that are open (true)
+# The result is then mapped to get the door numbers (indexed+1)
+output = HundredDoors.doors(100)
+  |> Enum.with_index()
+  |> Enum.filter(fn {door, _i} -> door == true end)
+  |> Enum.map(fn {_door, i} -> i + 1 end)
+
+# Print the open doors
+IO.puts("Open doors: #{inspect(output)}")
